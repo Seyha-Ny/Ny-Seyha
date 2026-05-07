@@ -114,6 +114,33 @@ body {
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
+.typing-text {
+  display: inline-block;
+  min-width: 12ch;
+  min-height: 8rem;
+  white-space: pre-wrap;
+  overflow: hidden;
+  border-right: 2px solid rgba(255,255,255,0.8);
+  transition: border-color 0.3s ease;
+}
+
+.animate-text.typing-active .typing-text {
+  border-color: var(--accent);
+}
+
+@keyframes blink-cursor {
+  0%, 100% {
+    border-color: rgba(255,255,255,0.8);
+  }
+
+  50% {
+    border-color: transparent;
+  }
+}
+
+.typing-text {
+  animation: blink-cursor 0.8s steps(40) infinite;
+}
 
 @keyframes glow {
 

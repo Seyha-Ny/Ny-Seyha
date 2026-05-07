@@ -1,41 +1,50 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // Animate letters in heading one by one
+  // Auto-start typing animation for hero heading
   const animateTextElement = document.querySelector('.animate-text');
-  if (animateTextElement) {
-    const processTextNode = (node, startDelay = 0) => {
-      if (node.nodeType === Node.TEXT_NODE) {
-        const text = node.textContent;
-        const delayStep = 0.35; // slower reveal per letter
-        const gapBetweenSegments = 0.6; // pause between separate text segments
-        const fragment = document.createDocumentFragment();
+  const typingText = document.querySelector('.typing-text');
+  if (animateTextElement && typingText) {
+    const words = (typingText.dataset.words || "Hello I'm\\nSeyha Ny").split('|').map(word => word.replace(/\\n/g, '\n'));
+    let currentWord = 0;
+    let isDeleting = false;
+    let charIndex = 0;
+    let typingTimer = null;
+    let isTypingActive = false;
 
-        for (let i = 0; i < text.length; i++) {
-          const span = document.createElement('span');
-          span.className = 'letter';
-          span.textContent = text[i];
-          span.style.animationDelay = (startDelay + i * delayStep) + 's';
-          fragment.appendChild(span);
+    const updateText = () => {
+      const current = words[currentWord];
+      typingText.innerHTML = current.substring(0, charIndex).replace(/\n/g, '<br>');
+
+      if (!isDeleting) {
+        if (charIndex < current.length) {
+          charIndex += 1;
+          typingTimer = setTimeout(updateText, 90 + Math.random() * 70);
+        } else {
+          isDeleting = true;
+          typingTimer = setTimeout(updateText, 1200);
         }
-
-        node.parentNode.replaceChild(fragment, node);
-        return startDelay + text.length * delayStep + gapBetweenSegments;
+      } else {
+        if (charIndex > 0) {
+          charIndex -= 1;
+          typingTimer = setTimeout(updateText, 50 + Math.random() * 40);
+        } else {
+          isDeleting = false;
+          currentWord = (currentWord + 1) % words.length;
+          typingTimer = setTimeout(updateText, 600);
+        }
       }
-      return startDelay;
     };
 
-    // Process direct text and accent span
-    let currentDelay = 0;
-    for (let child of animateTextElement.childNodes) {
-      if (child.nodeType === Node.TEXT_NODE) {
-        currentDelay = processTextNode(child, currentDelay);
-      } else if (child.className === 'accent') {
-        for (let node of child.childNodes) {
-          if (node.nodeType === Node.TEXT_NODE) {
-            currentDelay = processTextNode(node, currentDelay);
-          }
-        }
-      }
-    }
+    const startTyping = () => {
+      if (isTypingActive) return;
+      isTypingActive = true;
+      animateTextElement.classList.add('typing-active');
+      charIndex = 0;
+      isDeleting = false;
+      currentWord = 0;
+      updateText();
+    };
+
+    startTyping();
   }
 
   // Add looping glow animations to hero heading on load
