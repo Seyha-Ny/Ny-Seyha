@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // animate counters
   const counters = document.querySelectorAll('.stat-number');
   counters.forEach((counter, idx) => {
+    if (!counter.hasAttribute('data-target')) return;
     const target = +counter.getAttribute('data-target') || 0;
     let current = 0;
     const step = Math.max(1, Math.floor(target / 20));
@@ -138,20 +139,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // allow orbit icons to interact (scroll to skills)
-  const orbitItems = document.querySelectorAll('.orbit-item');
-  orbitItems.forEach(item => {
-    item.addEventListener('click', () => {
-      const skillsSection = document.querySelector('#skills');
-      if (!skillsSection) return;
-      const offset = 90;
-      const top = Math.max(0, skillsSection.offsetTop - offset);
-      window.scrollTo({ top, behavior: 'smooth' });
-    });
-  });
-
   // Stagger animations for cards on scroll
-  const cards = document.querySelectorAll('.project-item, .education-item, .service');
+  const cards = document.querySelectorAll('.education-item, .service');
   const cardObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry, idx) => {
       if (entry.isIntersecting) {
@@ -172,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // Add subtle pulse animation on button hover
-  const buttons = document.querySelectorAll('.hero-buttons a, form button, .project-item a');
+  const buttons = document.querySelectorAll('.hero-buttons a, form button');
   buttons.forEach(btn => {
     btn.addEventListener('mouseenter', function () {
       this.style.animation = 'pulse 1.5s ease-in-out';
@@ -192,27 +181,6 @@ document.addEventListener('DOMContentLoaded', function () {
       this.parentElement.style.transform = 'translateX(0)';
     });
   });
-
-  // Add contact form handler
-  const contactForm = document.querySelector('form');
-  if (contactForm) {
-    contactForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      const nameInput = this.querySelector('input[type="text"]');
-      const emailInput = this.querySelector('input[type="email"]');
-      const subjectInput = this.querySelector('input[name="subject"]') || { value: 'Portfolio Inquiry' };
-      const messageInput = this.querySelector('textarea');
-
-      const name = nameInput.value;
-      const email = emailInput.value;
-      const subject = subjectInput.value || 'Portfolio Inquiry';
-      const message = messageInput.value;
-
-      const body = `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`;
-      const mailto = `mailto:your-email@example.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      window.location.href = mailto;
-    });
-  }
 
   // Mobile & Tablet hamburger menu functionality
   const hamburger = document.getElementById('hamburger');
